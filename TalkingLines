@@ -1,0 +1,203 @@
+/* OpenProcessing Tweak of *@*http://www.openprocessing.org/sketch/10475*@* */
+/* !do not delete the line above, required for linking your tweak if you re-upload */
+
+// Perlin points code by Dean van Hasselt, openprocessing.org/sketch/10475
+// Audio input from code.compartmental.net/tools/minim/manual-audioinput/
+
+import ddf.minim.*;
+
+Minim minim;
+AudioInput in;
+
+
+//int elapsedFrames = 0;
+ArrayList points = new ArrayList();
+boolean drawing = false;
+int volume, zeroes, elapsedFrames, puntDist = 0;
+
+float r=random(0);
+float startPointX, startPointY, velUp = 0;
+int startMove = 20;
+int mult =100;
+
+// -------------------  Into the Void  ------------------- //
+
+void setup() {
+  smooth();
+  size(850, 850);
+  background(255);
+
+  
+  startPointX = width/2; 
+  startPointY = height/2;
+
+
+  minim = new Minim(this);
+  in = minim.getLineIn(Minim.STEREO, 2);
+}
+
+// -------------------  The Business End  ------------------- //
+
+
+void draw() {
+  
+
+  volume = abs(int(in.right.get(1)*mult));
+  println(volume);    // PRINTING INPUT & X100 FOR SIZE, INTERGER FOR EASE!
+  talk();
+
+  if (drawing) {
+    PVector pos = new PVector();
+
+    pos.x = startPointX ;
+    pos.y = startPointY ;
+
+    //    pos.x = mouseX;  //orig. mouse location mapping
+    //    pos.y = mouseY;
+
+    PVector vel = new PVector();
+    vel.x = (velUp);
+    vel.y = (velUp);
+
+    Point punt = new Point(pos, vel, puntDist);  //ORIG VAL: (pos, vel, 250) 250=DISTANCE
+    points.add(punt);
+  } 
+
+
+  for (int i = 0; i < points.size(); i++) {
+    Point localPoint = (Point) points.get(i);
+    if (localPoint.isDead == true) {
+      points.remove(i);
+    }
+    localPoint.update();
+    localPoint.draw();
+  }
+
+  elapsedFrames++;
+}
+
+void stop() {
+  // always close Minim audio classes when you are done with them
+  in.close();
+  minim.stop();
+  super.stop();
+
+  // -------------------  BEHAVIOUR OF INPUT  ------------------- //
+
+//        println("QUIET!");
+
+}
+void talk() {
+  
+    if ((volume >7) && (volume <23)) {    //Draw if vol>1
+    drawing = true;
+    puntDist = 88;
+//    fill (254, 27, 10, 55);    // fill(random(78),55);  //Dark & nice combo  
+    stroke (43, 9, 8, 55);    // fill(random(78),55);  //Dark & nice combo  
+    zeroes = 0;
+
+} else if ((volume > 24) && (volume < 34)) {  // Draw darker, longer
+    drawing = true;
+    puntDist = 350; 
+    mult = 100;
+    velUp = velUp/(random(-3,3));
+//    fill (250, 218, 0, 55);    // Colours - Mid-stroke change = col. grad!
+    zeroes = 0;
+    
+  
+}   else if ((volume > 35) && (volume < 55))  {  // Draw darker, longer
+    drawing = true;
+    puntDist = 500;  
+    mult = 150;
+    velUp = velUp/(random(-12,10));
+    fill (247, 255, 208, 55);    // Colours - Mid-stroke change = col. grad!
+    zeroes = 0;
+    
+}   else if (volume > 140){   // stars!
+    drawing = true;
+//    fill(250, 250,243,98);  //stroke(247, 244, 5,50);    // Colours - Mid-stroke change = col. grad!
+    ellipse(random(width), random(width), 3, 3);
+    stroke(247, 244, 5,50);
+    zeroes = 0;
+   
+    
+}  if (int(volume) <= 2) {    //orig was:   } else if (volume == 0) {  (volume < 7)
+    zeroes++;                // Add a zero if volume is nil
+
+}   if (zeroes >=3){                          // 0x2= move startPoints 
+    startPointX = (random(-startMove,startMove)+startPointX) ;
+    startPointY = (random(-startMove,startMove)+startPointY) ;
+    mult = 100;
+    
+}   if (zeroes >= 15) {    //orig was:   } else if (volume == 0) {  (volume < 7)
+    drawing = false;
+        println("QUIET!");
+        
+}  if ((startPointX>=width)|(startPointY>=height)){
+    startPointX = width/2; 
+    startPointY = height/2;
+
+}  if (zeroes > 55) {    //Check if silence is working = no draw
+    drawing = false;
+//    println("QUIET!");
+
+}
+
+//
+//void noTalk() {
+//  drawing = false;
+
+}
+
+
+// -------------------  This Class is it's own thing, must be below loop, etc.  ------------------- //
+
+class Point {
+
+  PVector pos, vel, noiseVec;
+  float noiseFloat, lifeTime, age;
+  boolean isDead;
+
+  public Point(PVector _pos, PVector _vel, float _lifeTime) {
+    pos = _pos;
+    vel = _vel;
+    lifeTime = _lifeTime;
+    age = -11;                         // AGE/TIME OF EXIST / PARTICLE  ?
+    isDead = false;
+    noiseVec = new PVector();
+  }
+
+  void update() {
+    noiseFloat = noise(pos.x * 0.0025, pos.y * 0.0025, elapsedFrames * 0.001);    //NOISE MULTI*S= +/- CURVINESS
+    noiseVec.x = cos(((noiseFloat -11.3) * TWO_PI) * 10);
+    noiseVec.y = sin(((noiseFloat -11.3) * TWO_PI) * 10);
+
+    vel.add(noiseVec);
+    vel.div(2);              //CURL/WARP TIGHTNESS RADIUS
+    pos.add(vel);
+
+    if (1.0-(age/lifeTime) == 0) {    // == # IS LIFETIME WITH MOVEMENT
+      isDead = true;
+    }
+
+    if (pos.x < 0 || pos.x > width || pos.y < 0 || pos.y > height) {
+      isDead = true;
+    }
+
+    age++;
+  }
+
+  void draw() {    
+    //    fill(0, 20);
+    //noStroke();
+  strokeWeight(.4); 
+//stroke(239, 245, 78, 100);  
+  ellipse(pos.x, pos.y, 1-(age/lifeTime), 1-(age/lifeTime));
+
+    //    ellipse(pos.x, pos.y, 1-(age/lifeTime), 1-(age/lifeTime));
+    //    fill(75,174);        //Original fill amounts =     fill(0,20);
+    //    fill(21,143,157);    // Colours - Mid-stroke change = col. grad!
+    //    fill(random(222),random(3),random(27));  // full-random, "0"limits colour range
+    //      fill(random(18),55);  //Dark & nice combo
+  }
+}

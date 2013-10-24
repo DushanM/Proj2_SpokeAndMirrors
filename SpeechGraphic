@@ -88,37 +88,37 @@ void stop() {
 }
 void talk() {
   
-    if ((volume >4) && (volume <30)) {    //Draw if vol>1
+    if ((volume >4) && (volume <19)) {    //Draw if vol>1
     drawing = true;
     puntDist = 98;
-    mult = 88;
+    mult = 67;
     velUp = velUp/(random(0,400));
-    fill (20, 10, 10, 55);    // fill(random(78),55);  //Dark & nice combo  
+    fill (253, 31, 8, 55);    // fill(random(78),55);  //Dark & nice combo  
     zeroes = 0;
 
   
-//}   else if ((volume > 34) && (volume < 62)) {  // Draw darker, longer
-//    drawing = true;
-//    puntDist = 291; 
-//    mult = 107;
-//    velUp = velUp/(random(-3,15));
-//    fill (254, 105, 5, 55);    // Colours - Mid-stroke change = col. grad!
-//    zeroes = 0;
+}   else if ((volume >= 20) && (volume <= 35)) {  // Draw darker, longer
+    drawing = true;
+    puntDist = 176; 
+    mult = 88;
+    velUp = velUp/(random(-3,15));
+    fill (135, 11, 22, 55);    // Colours - Mid-stroke change = col. grad!
+    zeroes = 0;
     
   
-}   else if (volume >= 31){ //&& (volume < 79))  {  // Draw darker, longer
+}   else if ((volume >= 36) && (volume <= 50))  {  // Draw darker, longer
     drawing = true;
-    puntDist = 326;  
+    puntDist = 281;  
     mult = 119;
     velUp = velUp/(random(-68,131));
-    fill (236, 200, 30, 55);    // Colours - Mid-stroke change = col. grad!
+    fill (236, 31, 31, 55);    // Colours - Mid-stroke change = col. grad!
     zeroes = 0;
     
-}   else if (volume > 80){   // Stars!
-    drawing = true;
-    fill(240, 36,15,98);  
-    ellipse(random(width), random(width), 3, 3);
-    zeroes = 0;
+//}   else if (volume >= 51){   // Stars!
+//    drawing = true;
+//    fill(75, 76,15,98);  
+//    ellipse(random(width), random(width), 3, 3);
+//    zeroes = 0;
 //   
    
    // --- Quiet Sound Counting Area ---------- //
@@ -127,12 +127,12 @@ void talk() {
 }   if (int(volume) <= 3) {    //orig was:   } else if (volume == 0) {  (volume < 7)
     zeroes++;                // Add a zero if volume is nil
 
-}   if (zeroes >=20){                          // 0x2= move startPoints
+}   if (zeroes >=7){                          // 0x2= move startPoints
     startPointX = (random(-startMove,startMove)+startPointX) ;
     startPointY = (random(-startMove,startMove)+startPointY) ;
     mult = 100;
     
-}   if (zeroes >= 15) {    //orig was:   } else if (volume == 0) {  (volume < 7)
+}   if (zeroes >= 8) {    //orig was:   } else if (volume == 0) {  (volume < 7)
     drawing = false;
     println("QUIET!");
         

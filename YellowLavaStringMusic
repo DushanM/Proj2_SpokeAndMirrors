@@ -136,8 +136,9 @@ void talk() {
     startPointY = height/2;
 
 }  if (zeroes > 55) {    //Check if silence is working = no draw
+    save ("SoundNebula.jpg");
     drawing = false;
-//    println("QUIET!");
+    println("Say CHEESE!");
 
 }
 

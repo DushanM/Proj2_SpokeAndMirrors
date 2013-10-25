@@ -129,15 +129,16 @@ void talk() {
     
 }   if (zeroes >= 15) {    //orig was:   } else if (volume == 0) {  (volume < 7)
     drawing = false;
-        println("QUIET!");
+    println("QUIET!");
         
 }  if ((startPointX>=width)|(startPointY>=height)){
     startPointX = width/2; 
     startPointY = height/2;
 
 }  if (zeroes > 55) {    //Check if silence is working = no draw
+    save ("SoundNebula.jpg");
     drawing = false;
-//    println("QUIET!");
+    println("Say CHEESE!");
 
 }
 
